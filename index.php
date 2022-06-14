@@ -37,6 +37,21 @@ include_once('includes/check_token.php');
 
 <?php include_once("header.php"); ?>
 
+<?php 
+
+    /* $query = array("query" => "{
+        shop {
+            id
+            name
+            email
+        }
+    }");
+    $graphql_test = $shopify->graphql($query);
+    $graphql_test = json_decode($graphql_test['body'], true); */
+    // echo print_r($graphql_test);
+
+?>
+
 
     <section>
         <div class="alert columns twelve">

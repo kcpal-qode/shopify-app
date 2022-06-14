@@ -79,4 +79,49 @@ class Shopify {
             return array('headers' => $headers, 'body' => $response[1]);
         }
     }
+
+    public function graphql($query = array()) {
+        $url = 'https://' . $this->get_url() . '/admin/api/2021-04/graphql.json';
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_HEADER, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        $headers[] = "";
+        $headers[] = "Content-Type: application/json";
+
+        if (!is_null($this->access_token)) $headers[] = "X-Shopify-Access-Token: " . $this->access_token;
+        
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($query));
+        curl_setopt($curl, CURLOPT_POST, true);
+
+        $response = curl_exec($curl);
+        $error = curl_errno($curl);
+        $err_message = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($error) {
+            return $err_message;
+        } else {
+            $response = preg_split("/\r\n\r\n|\n\n|\r\r/", $response, 2);
+
+            $headers = array();
+            $headers_content = explode("\n", $response[0]);
+            $headers['status'] = $headers_content[0];
+            array_shift($headers_content);
+
+            foreach ($headers_content as $content) {
+                $data = explode(":", $content);
+                $headers[trim($data[0])] = trim($data[1]);
+            }
+
+            return array('headers' => $headers, 'body' => $response[1]);
+        }
+
+    }
 }
