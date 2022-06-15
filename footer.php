@@ -1,6 +1,7 @@
 </main>
 <script src="https://unpkg.com/@shopify/app-bridge@2"></script>
 <script src="https://unpkg.com/@shopify/app-bridge-utils"></script>
+<script src="https://unpkg.com/axios/dist/axios.js"></script>
 <script>
     var AppBridge = window['app-bridge'];
     var AppBridgeUtil = window['app-bridge-utils'];
@@ -53,14 +54,50 @@
         formData.append('token', token);
 
         fetch('verify_session.php', {
-            method: 'POST',
-            header: {
-                'Content-Type': 'application/json'
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => console.log(data));
+                method: 'POST',
+                header: {
+                    'Content-Type': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (data.success) {
+                    axios({
+                        method: 'POST',
+                        url: 'authenticatedFetch.php',
+                        data: {
+                            shop: data.shop.host,
+                            query: `query {
+                                products(first: 2) {
+                                edges {
+                                node {
+                                    id
+                                    title
+                                    description
+                                    images(first: 1) {
+                                    edges {
+                                        node {
+                                        originalSrc
+                                        }
+                                    }
+                                    }
+                                    status
+                                }
+                                }
+                            }
+                            }`
+                        },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer: ' + token
+                        }
+                    }).then((response) => {
+                        console.log(response.data);
+                    });
+                }
+            });
     });
 </script>
 </body>

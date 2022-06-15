@@ -14,7 +14,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             "product" => array(
                 "title" =>  $_POST['product_title'],
                 "body_html" => $_POST['product_body_html'],
-            ),
+                "metafields" => [
+                    [
+                        "namespace" => "global",
+                        "key" => "example_metafield",
+                        "value" => "This is a metafield value",
+                        "type" => "string"
+                    ]
+                ]
+            )
         );
         $create_product = $shopify->rest_api('/admin/api/2022-04/products.json', $product_data, 'POST');
         $create_product = json_decode($create_product['body'], true);
@@ -46,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // $products = $shopify->rest_api('/admin/api/2022-04/products.json', array(), 'GET');
 // $products = json_decode($products['body'], true);
 $query = array("query" => "{
-	products(first: 2) {
+	products(first: 10) {
     edges {
       node {
         id

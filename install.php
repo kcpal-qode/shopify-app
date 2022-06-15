@@ -1,6 +1,6 @@
 <?php
 $_API_KEY = 'c34e6f7a44f1b087c43f3d784ee5fe66';
-$_NGROK_URL = 'https://1da9-202-79-34-246.ngrok.io';
+$_NGROK_URL = 'https://0a7f-202-79-34-246.ngrok.io';
 $shop = $_GET['shop'];
 $scopes = 'read_products,write_products,read_orders,write_orders,read_script_tags,write_script_tags';
 $redirect_uri= $_NGROK_URL . '/elana/token.php';

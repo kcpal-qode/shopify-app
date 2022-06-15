@@ -41,13 +41,14 @@ class Shopify {
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
 
         $headers[] = "";
+        $headers[] = "Content-Type: application/json";
         if(!is_null($this->access_token)) {
             $headers[] = "X-Shopify-Access-Token: " . $this->access_token;
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
 
         if ($method != 'GET' && in_array($method, array('POST', 'PUT'))) {
-            if(is_array($query)) $query = http_build_query($query);
+            if(is_array($query)) $query = json_encode($query);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
         }
 
