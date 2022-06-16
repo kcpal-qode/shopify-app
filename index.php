@@ -27,7 +27,8 @@ include_once('includes/check_token.php');
  *             CREATE A BILLING CHARGE
  * =============================================
  */
-include_once('billing/oneTimeBilling.php');
+// include_once('billing/oneTimeBilling.php');
+include_once('billing/recurringBilling.php');
 
 
 /**

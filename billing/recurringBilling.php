@@ -1,6 +1,6 @@
 <?php
 
-$query = "SELECT * FROM billings WHERE shop_url='".$shopify->get_url()."' LIMIT 1";
+$query = "SELECT * FROM recurringBilling WHERE shop_url='" . $shopify->get_url() . "' LIMIT 1";
 $result = $mysql->query($query);
 
 $billing_data = $result->fetch_assoc();
@@ -10,8 +10,8 @@ if (isset($_GET['charge_id']) || $billing_data['charge_id']) {
 
     $query = array(
         "query" => '{
-            node(id: "gid://shopify/AppPurchaseOneTime/' . $cid . '") {
-                ... on AppPurchaseOneTime {
+            node(id: "gid://shopify/AppSubscription/' . $cid . '") {
+                ... on AppSubscription {
                     status
                     id
                 }
@@ -41,26 +41,40 @@ if (isset($_GET['charge_id']) || $billing_data['charge_id']) {
     $status = $check_charge['data']['node']['status'];
 
 
-    $query = "INSERT INTO billings (shop_url, charge_id, gid, status) VALUES ('" . $shop_url . "','" . $charge_id . "','" . $gid . "','" . $status . "') ON DUPLICATE KEY UPDATE status = '" . $status . "'";
+    $query = "INSERT INTO recurringBilling (shop_url, charge_id, gid, status) VALUES ('" . $shop_url . "','" . $charge_id . "','" . $gid . "','" . $status . "') ON DUPLICATE KEY UPDATE status = '" . $status . "'";
     $mysql->query($query);
-} else {
-    $query = array("query" => 'mutation {
-    appPurchaseOneTimeCreate(
-        name: "Elana One-Time Charge"
-        price: { amount: 119.99 currencyCode: USD }
+ } else {
+$query = array("query" => 'mutation {
+    appSubscriptionCreate(
+        name: "WeeklyHow Application Recurring Charge"
+        lineItems: {
+            plan: {
+                appRecurringPricingDetails: {
+                    price: { 
+                        amount: 19.99 
+                        currencyCode: USD 
+                    }
+                }
+            }
+        }
         test: true
         returnUrl: "https://' . $shopify->get_url() . '/admin/apps/elana-103"
         ) {
-            appPurchaseOneTime {
+            appSubscription {
                 id
             }
             confirmationUrl
+            userErrors{
+                field
+                message
+            }
         }
     }');
 
-    $charge = $shopify->graphql($query);
-    $charge = json_decode($charge['body'], TRUE);
+$charge = $shopify->graphql($query);
+$charge = json_decode($charge['body'], TRUE);
 
-    echo "<script>top.window.location = '" . $charge['data']['appPurchaseOneTimeCreate']['confirmationUrl'] . "'</script>";
-    die;
-}
+echo "<script>top.window.location = '" . $charge['data']['appSubscriptionCreate']['confirmationUrl'] . "'</script>";
+die;
+
+ }

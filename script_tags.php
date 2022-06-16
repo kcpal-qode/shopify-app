@@ -7,7 +7,7 @@ $parameters = $_GET;
 
 include_once("includes/check_token.php");
 
-$script_url = 'https://0a7f-202-79-34-246.ngrok.io/elana/scripts/elana.js';
+$script_url = 'https://e8d4-202-79-34-246.ngrok.io/elana/scripts/elana.js';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['action_type'] == 'create_script') {
